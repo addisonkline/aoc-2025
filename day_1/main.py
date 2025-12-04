@@ -8,19 +8,52 @@ class Dial:
     def __init__(self) -> None:
         self.loc = 50
 
-    def turn(
+    def _turn(
         self,
         direction: Literal["L", "R"],
         magnitude: int
-    ) -> None:
+    ) -> int:
+        """
+        Turn the dial left or right by the given magnitude.
+        Returns the number of times this turn "crosses" 0.
+        """
+        loc_old = self.loc
+
         match direction:
             case "L":
-                loc_new = self.loc - magnitude
+                loc_new = loc_old - magnitude
             case "R":
-                loc_new = self.loc + magnitude
-        
+                loc_new = loc_old + magnitude
+
         loc_mod_100 = loc_new % 100
         self.loc = loc_mod_100
+
+        return self._num_clicks(loc_old, magnitude, direction)
+    
+    def _num_clicks(
+        self,
+        loc_start: int,
+        magnitude: int,
+        direction: Literal["L", "R"]
+    ) -> int:
+        """
+        Count the number of times this turn crosses 0 on the dial.
+        """
+        crosses = 0
+
+        match direction:
+            case "L":
+                loc_end = loc_start - magnitude
+                for i in range(loc_start - 1, loc_end - 1, -1):
+                    if i % 100 == 0:
+                        crosses += 1
+            case "R":
+                loc_end = loc_start + magnitude
+                for i in range(loc_start + 1, loc_end + 1, 1):
+                    if i % 100 == 0:
+                        crosses += 1
+                
+        return crosses
 
     def process_input(
         self,
@@ -32,16 +65,16 @@ class Dial:
         with open(input_filepath) as file:
             lines = file.readlines()
 
-            num_zeros = 0
+            clicks = 0
             for line in lines:
                 direction = line[0]
                 assert (direction == "L" or direction == "R")
                 magnitude = int(line[1:])
-                self.turn(direction, magnitude) # type: ignore
-                if self.loc == 0:
-                    num_zeros += 1
+                clicks_this = self._turn(direction, magnitude) # type: ignore
+                print(f"{direction}{magnitude} to {self.loc}, clicks = {clicks_this}")
+                clicks += clicks_this
         
-            return num_zeros
+            return clicks
         
 
 if __name__ == "__main__":
