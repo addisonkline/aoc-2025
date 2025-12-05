@@ -14,6 +14,7 @@ def find_all_occurrences(
 
     return indices
 
+
 def first_unique_pairing(
     list_first: list[int],
     list_second: list[int],
@@ -31,3 +32,24 @@ def first_unique_pairing(
             return 0, idx_second
 
     return None
+
+
+def largest_digit_in_interval(
+    l: list[int],
+    idx_start: int,
+    idx_end: int,
+) -> tuple[int, int]:
+    """
+    Find the largest digit in a subrange of the given list.
+    Returns `largest_digit, index_largest_digit`.
+    """
+    largest = 0
+    idx = 0
+    
+    for i in range(idx_start, idx_end):
+        digit = l[i]
+        if digit > largest:
+            largest = digit
+            idx = i
+
+    return largest, idx

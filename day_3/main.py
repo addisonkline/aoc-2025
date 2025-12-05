@@ -1,6 +1,7 @@
 from utils import (
     find_all_occurrences,
-    first_unique_pairing
+    first_unique_pairing,
+    largest_digit_in_interval
 )
 
 class BatteryBank:
@@ -8,8 +9,10 @@ class BatteryBank:
     def __init__(
         self,
         joltages: list[int],
+        subsize: int = 12,
     ) -> None:
         self.joltages = joltages
+        self.subsize = subsize
 
     @staticmethod
     def from_string(
@@ -31,11 +34,23 @@ class BatteryBank:
         Obtain the max joltage (ordered n-tuple with the largest value).
         Returns `max_joltage, indices`.
         """
-        raise NotImplementedError # TODO: this
+        max_joltage_str = ""
+        indices: list[int] = []
+        idx_start = 0
+        idx_end = len(self.joltages) - self.subsize + 1
+
+        for _ in range(self.subsize):
+            digit_val, digit_loc = largest_digit_in_interval(self.joltages, idx_start, idx_end)
+            max_joltage_str += str(digit_val)
+            indices.append(digit_loc)
+            idx_start = digit_loc + 1
+            idx_end += 1
+
+        return int(max_joltage_str), indices
     
 
 if __name__ == "__main__":
-    filepath = "day_3/input_test.txt"
+    filepath = "day_3/input.txt"
     with open(filepath) as file:
         joltage_sum = 0
         for line in file.readlines():
