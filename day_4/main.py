@@ -69,6 +69,37 @@ class PaperRolls:
                     indices_rolls.append((row, col))
 
         return num_rolls, indices_rolls
+    
+    def remove_rolls(
+        self,
+        coords: list[tuple[int, int]]
+    ) -> None:
+        """
+        Remove the paper rolls at all spots in the specified list of coordinates.
+        """
+        for row, col in coords:
+            self.rolls[row][col] = False
+
+    def remove_rolls_iterative(
+        self,
+    ) -> tuple[int, list[list[tuple[int, int]]]]:
+        """
+        Iteratively remove all rolls in this array until none are left.
+        Returns `num_rolls_removed, removal_coords_by_iteration`.
+        """
+        num_rolls_removed = 0
+        rcs: list[list[tuple[int, int]]] = []
+
+        accessible_num, accessible_coords = self.accessible_rolls()
+        while accessible_num > 0:
+            self.remove_rolls(accessible_coords)
+            print(f"found and removed {accessible_num} rolls")
+            num_rolls_removed += accessible_num
+            rcs.append(accessible_coords)
+
+            accessible_num, accessible_coords = self.accessible_rolls()
+        
+        return num_rolls_removed, rcs
 
     
 if __name__ == "__main__":
@@ -76,6 +107,7 @@ if __name__ == "__main__":
     with open(filepath) as file:
         contents = file.read()
         pr = PaperRolls.from_string(contents)
-        num_rolls, _ = pr.accessible_rolls()
+        num_rolls_removed, rcs = pr.remove_rolls_iterative()
         print("=" * 80)
-        print(f"number of accessible rolls: {num_rolls}")
+        print(f"removals complete after {len(rcs)} iterations")
+        print(f"number of removed rolls: {num_rolls_removed}")
