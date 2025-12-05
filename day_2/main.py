@@ -53,8 +53,6 @@ class Range:
         
         possible_splits = factorization(num_digits, ignore_trivial=False)
         for s in possible_splits:
-            if not s[1] == 2:
-                continue
             split_list = create_split_list(id, s)
             if all_identical(split_list):
                 return False
