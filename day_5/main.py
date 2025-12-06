@@ -1,3 +1,8 @@
+from utils import (
+    condense_ranges
+)
+
+
 class IngredientDB:
 
     def __init__(
@@ -44,13 +49,43 @@ class IngredientDB:
                     break
         
         return count
+    
+    def count_fresh_ids(
+        self,
+    ) -> int:
+        """
+        Count the number of possible fresh IDs based on the existing ranges.
+        """
+        self._merge_ranges()
+        print(f"{len(self.ranges)} ranges after merging: {self.ranges}")
+
+        raise NotImplementedError
+    
+    def _merge_ranges(
+        self,
+    ) -> None:
+        """
+        Iteratively condense the ranges provided to remove overlap.
+        """
+        overlap_exists = True
+        current_ranges = self.ranges
+
+        while overlap_exists:
+            temp_ranges: list[tuple[int, int]] = []
+            num_merges = 0
+            print(f"current ranges: {current_ranges}")
+            for i in range(len(current_ranges)):
+                for j in range(i + 1, len(current_ranges)):
+                    condensed = condense_ranges(current_ranges[i], current_ranges[j])
+                    
+                    raise NotImplementedError
 
 
 if __name__ == "__main__":
-    filepath = "day_5/input.txt"
+    filepath = "day_5/input_test.txt"
     with open(filepath) as file:
         contents = file.read()
         idb = IngredientDB.from_string(contents)
-        num_fresh = idb.check_ids()
+        num_fresh = idb.count_fresh_ids()
         print("=" * 80)
-        print(f"number of fresh ingredients: {num_fresh}")
+        print(f"number of fresh ingredient IDs: {num_fresh}")
