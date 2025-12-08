@@ -3,7 +3,9 @@ from enum import StrEnum
 
 from utils import (
     product,
-    array_of_zeros
+    array_of_zeros,
+    build_number_strings_lists,
+    parse_cephalopod_numbers
 )
 
 class OperationType(StrEnum):
@@ -81,37 +83,35 @@ class MathWorksheet:
         """
         Build a MathWorksheet from the given string input (see `day_6/input.txt`).
         """
-        lines = input_str.splitlines()
-        num_rows = len(lines) - 1
-        num_cols = len(lines[0].split())
+        number_strings_arr = build_number_strings_lists(input_str)
 
-        int_arr = array_of_zeros(num_rows, num_cols)
+        problems: list[MathProblem] = []
 
-        for i in range(num_rows):
-            line = lines[i].split()
-            int_row = [int(val) for val in line]
-            int_arr[i] = int_row
+        for lst in number_strings_arr:
+            nums = lst[:-1]
+            print(nums)
+            op = lst[-1]
 
-        print(f"num table: {int_arr} ({len(int_arr)}x{len(int_arr[0])})")
+            nums_adj = parse_cephalopod_numbers(nums)
+            op_sanitized = op.strip()
 
-        list_ops = MathWorksheet._handle_operations_row(lines[num_rows].split())
+            match op_sanitized:
+                case "+":
+                    op_enum = OperationType.ADD
+                case "*":
+                    op_enum = OperationType.MULTIPLY
 
-        print(f"list ops: {list_ops}")
-
-        # create final lists
-        final: list[MathProblem] = []
-        for i in range(num_cols):
-            nums = [row[i] for row in int_arr]
-            op = list_ops[i]
             problem = MathProblem(
-                numbers=nums,
-                operation=op
+                numbers=nums_adj,
+                operation=op_enum
             )
-            final.append(problem)
 
+            problems.append(problem)
+        
         return MathWorksheet(
-            problems=final
+            problems=problems
         )
+
     
     def solve_problems(
         self,
