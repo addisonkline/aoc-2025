@@ -15,7 +15,7 @@ def condense_ranges(
     if (r1_start < r2_start) and (r1_end <= r2_end) and (r1_end > r2_start):
         return (r1_start, r2_end)
     # case 2: r1 starts after r2
-    if (r1_start > r2_start) and (r1_end >= r2_end) and (r2_start > r1_end):
+    if (r1_start > r2_start) and (r1_end >= r2_end) and (r2_end > r1_start):
         return (r2_start, r1_end)
     # case 3: r1 contains r2
     if (r1_start < r2_start) and (r1_end > r2_end):

@@ -59,30 +59,60 @@ class IngredientDB:
         self._merge_ranges()
         print(f"{len(self.ranges)} ranges after merging: {self.ranges}")
 
-        raise NotImplementedError
+        count = 0
+        for start, end in self.ranges:
+            count += end - start + 1
+
+        return count
     
     def _merge_ranges(
         self,
+        max_iters: int = 10
     ) -> None:
         """
         Iteratively condense the ranges provided to remove overlap.
         """
-        overlap_exists = True
-        current_ranges = self.ranges
+        iteration = 0
+        done = False
 
-        while overlap_exists:
-            temp_ranges: list[tuple[int, int]] = []
+        while not done:
+            print(f"ranges at iteration {iteration}: {self.ranges}")
             num_merges = 0
-            print(f"current ranges: {current_ranges}")
-            for i in range(len(current_ranges)):
-                for j in range(i + 1, len(current_ranges)):
-                    condensed = condense_ranges(current_ranges[i], current_ranges[j])
-                    
-                    raise NotImplementedError
+            temp_ranges: list[tuple[int, int]] = []
+            mergeable: dict[tuple[int, int], bool] = {(start, stop): False for start, stop in self.ranges}
 
+            for i in range(len(self.ranges)):
+                for j in range(i + 1, len(self.ranges)):
+                    condensed = condense_ranges(self.ranges[i], self.ranges[j])
+
+                    # these items can be merged
+                    if condensed is not None:
+                        print(f"merging: {self.ranges[i]} + {self.ranges[j]} -> {condensed}")
+                        temp_ranges.append(condensed)
+                        mergeable[self.ranges[i]] = True
+                        mergeable[self.ranges[j]] = True
+                        num_merges += 1
+
+            print(f"after iteration {iteration}:")
+            print(f"temp: {temp_ranges}")
+            print(f"mergeables: {mergeable}")
+
+            # create final ranges list for this cycle
+            unmergeables = [key for key, val in mergeable.items() if not val]
+            final = unmergeables + list(set(temp_ranges))
+
+            iteration += 1
+            self.ranges = final
+
+            if num_merges == 0:
+                done = True
+
+            if iteration == max_iters:
+                break
+            
 
 if __name__ == "__main__":
-    filepath = "day_5/input_test.txt"
+    filepath = "day_5/input.txt"
     with open(filepath) as file:
         contents = file.read()
         idb = IngredientDB.from_string(contents)
