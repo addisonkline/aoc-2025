@@ -47,13 +47,24 @@ class ServerRack:
                 values.extend(self.devices[value])
 
         return list_of_paths, number_of_paths
+    
+    def find_paths_through(
+        self,
+        start: str,
+        end: str,
+        through: list[str],
+    ) -> int:
+        """
+        Find the number of paths between `start` and `end` that include everything in `through`.
+        """
+        raise NotImplementedError
 
 
 if __name__ == "__main__":
-    filepath = "day_11/input.txt"
+    filepath = "day_11/input_test_p2.txt"
     with open(filepath) as file:
         contents = file.read()
         sr = ServerRack.from_string(contents)
-        list_of_paths, number_of_paths = sr.find_paths("you", "out")
+        number_of_paths = sr.find_paths_through("svr", "out", ["dac", "fft"])
         print("=" * 80)
         print(f"number of paths: {number_of_paths}")
