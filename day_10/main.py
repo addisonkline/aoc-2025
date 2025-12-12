@@ -6,7 +6,9 @@ from utils import (
     create_initial_vector,
     create_button_vector,
     vecmult,
-    veccmp
+    veccmp,
+    vecstr,
+    Matrix
 )
 
 
@@ -79,9 +81,13 @@ class LightMachine:
             initial_vec = create_initial_vector(target_vec_size)
             button_vecs = [create_button_vector(button, target_vec_size) for button in buttons]
 
-            print(f"target vec: {target_vec}")
-            print(f"button vecs: {button_vecs}")
-            print(f"initial vs. target: {veccmp(initial_vec, target_vec)}")
+            print(f"target vec: {vecstr(target_vec)}")
+            print(f"button vecs: {[vecstr(vec) for vec in button_vecs]}")
+
+            button_matrix = Matrix(button_vecs)
+            print(f"button matrix: \n{button_matrix}")
+            button_matrix.gaussian_elimination()
+            print(f"after GE: \n{button_matrix}")
 
         return button_presses_per_row, total_button_presses
 
